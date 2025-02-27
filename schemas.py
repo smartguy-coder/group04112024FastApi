@@ -1,11 +1,15 @@
 from pydantic import BaseModel, Field
 
 
-class NewProduct(BaseModel):
+class PatchProduct(BaseModel):
     price: float = Field(ge=0.01, lt=10000, examples=[125, 325])
     title: str = Field(
         min_length=3, examples=["Пригоди бравого вояка Швейка. Подарункова класика"]
     )
+
+
+class NewProduct(PatchProduct):
+
     description: str = Field(
         min_length=20,
         max_length=1024,
