@@ -23,6 +23,42 @@ def index(request: Request, q: str = Form(default="")):
     )
 
 
+@app.get("/map_route")
+def map_route(request: Request):
+
+    context = {"request": request}
+    return templates.TemplateResponse(
+        "map.html",
+        context=context,
+    )
+
+
+@app.get("/video")
+def video(request: Request):
+
+    context = {"request": request}
+    return templates.TemplateResponse(
+        "video.html",
+        context=context,
+    )
+
+
+@app.get("/{product_id}")
+def get_book_info(request: Request, product_id: str):
+    book = storage.get_product(product_id=product_id, with_raise=False)
+    if not book:
+        return templates.TemplateResponse(
+            "404.html",
+            context={"request": request},
+        )
+
+    context = {"request": request, "book": book}
+    return templates.TemplateResponse(
+        "details.html",
+        context=context,
+    )
+
+
 # API
 @app.post("/books/", tags=["Книги"], status_code=status.HTTP_201_CREATED)
 def create_book(new_book: NewProduct) -> SavedProduct:
