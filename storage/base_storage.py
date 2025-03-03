@@ -16,7 +16,7 @@ class BaseStorage(ABC):
         pass
 
     @abstractmethod
-    def get_product(self, product_id: str) -> SavedProduct:
+    def get_product(self, product_id: str, with_raise) -> SavedProduct:
         pass
 
     @abstractmethod
@@ -64,9 +64,14 @@ class MongoStorage(BaseStorage):
         saved_product = SavedProduct(**payload)
         return saved_product
 
-    def get_product(self, product_id: str) -> SavedProduct:
+    def get_product(
+        self, product_id: str, with_raise: bool = True
+    ) -> SavedProduct | None:
         query = {"id": product_id}
         book = self.collection_product.find_one(query)
+        if not book and not with_raise:
+            return None
+
         if not book:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
